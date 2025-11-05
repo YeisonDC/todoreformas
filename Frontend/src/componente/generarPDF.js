@@ -12,7 +12,7 @@ export async function generarPDF(datos, servicios) {
 
   const doc = new jsPDF();
 
-  // Cargar logo
+  // Logo
   const logoUrl =
     "https://res.cloudinary.com/dvj1tw3ui/image/upload/v1762298998/afcbda62-db73-457b-a60b-27f95d1954db_msvvdk.jpg";
   const img = await fetch(logoUrl)
@@ -87,84 +87,77 @@ export async function generarPDF(datos, servicios) {
       fontStyle: "bold",
       halign: "left",
     },
-    alternateRowStyles: {
-      fillColor: [250, 250, 250],
-    },
+    alternateRowStyles: { fillColor: [250, 250, 250] },
     tableLineColor: [200, 200, 200],
     tableLineWidth: 0.2,
   });
 
   // Total
   let y = doc.lastAutoTable.finalY + 10;
-  const totalTexto = `Total de la cotización: € ${total.toLocaleString("es-ES", {
+  const euro = String.fromCharCode(8364);
+  const totalTexto = `Total de la cotización: ${euro} ${total.toLocaleString("es-ES", {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
-  })}`; // 👈 se añadió un espacio después del símbolo €
+  })}`;
 
   doc.setFont("helvetica", "bold");
   doc.setFontSize(13);
   doc.setTextColor(60, 60, 60);
   doc.text(totalTexto, 20, y);
 
-  // Observaciones
+  // 🔹 Observaciones y Abonos en paralelo
+  const columnaAncho = 85;
+  let columnaY = y + 10;
+  let alturaIzquierda = columnaY;
+  let alturaDerecha = columnaY;
+
+  // Observaciones (izquierda)
   if (datos.observaciones) {
-    y += 12;
     doc.setFont("helvetica", "bold");
     doc.setFontSize(11);
     doc.setTextColor(0, 0, 0);
-    doc.text("Observaciones:", 20, y);
+    doc.text("Observaciones:", 20, columnaY);
 
     doc.setFont("helvetica", "normal");
     doc.setFontSize(10);
-    const textLines = doc.splitTextToSize(datos.observaciones, 170);
-    doc.text(textLines, 20, y + 6);
-    y += textLines.length * 5 + 6;
+    const obsText = doc.splitTextToSize(datos.observaciones, columnaAncho);
+    doc.text(obsText, 20, columnaY + 6);
+    alturaIzquierda += obsText.length * 5 + 12;
   }
 
-  // Footer
-  const footerY = y + 15;
+  // Abonos (derecha)
+  if (datos.abonos) {
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(11);
+    doc.text("Abonos:", 115, columnaY);
 
-  // Información de pago
-  doc.setFontSize(10);
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(10);
+    const abonosText = doc.splitTextToSize(datos.abonos, columnaAncho);
+    doc.text(abonosText, 115, columnaY + 6);
+    alturaDerecha += abonosText.length * 5 + 12;
+  }
+
+  // Calcular el final más bajo entre ambas columnas
+  y = Math.max(alturaIzquierda, alturaDerecha) + 10;
+
+  // Firma
+  let firmaY = y + 7;
+  if (firmaY > 270) {
+    doc.addPage();
+    firmaY = 40;
+  }
+
+  doc.setDrawColor(100);
+  doc.line(20, firmaY, 80, firmaY);
   doc.setFont("helvetica", "bold");
-  doc.text("Información de pago", 20, footerY);
+  doc.setFontSize(11);
+  doc.text("Anderson Giraldo", 20, firmaY + 6);
 
   doc.setFont("helvetica", "normal");
   doc.setFontSize(10);
-  let pagoY = footerY + 6;
-  if (datos.pago?.responsable) {
-    doc.text(datos.pago.responsable, 20, pagoY);
-    pagoY += 6;
-  }
-  if (datos.pago?.banco) {
-    doc.text(datos.pago.banco, 20, pagoY);
-    pagoY += 6;
-  }
-  if (datos.pago?.cuenta) {
-    doc.text(`Cuenta: ${datos.pago.cuenta}`, 20, pagoY);
-    pagoY += 6;
-  }
-  if (datos.pago?.fechaPago) {
-    doc.text(`Fecha de pago: ${datos.pago.fechaPago}`, 20, pagoY);
-    pagoY += 6;
-  }
-
-  // Contacto
-  doc.setFont("helvetica", "bold");
-  doc.text("Contacto", 130, footerY);
-  doc.setFont("helvetica", "normal");
-  let contactoY = footerY + 6;
-  if (datos.contacto?.telefono) {
-    doc.text(`Tel: ${datos.contacto.telefono}`, 130, contactoY);
-    contactoY += 6;
-  }
-  if (datos.contacto?.correo) {
-    doc.text(datos.contacto.correo, 130, contactoY);
-    contactoY += 6;
-  }
-  if (datos.contacto?.direccion) {
-    doc.text(datos.contacto.direccion, 130, contactoY);
-  }
+  doc.text("Proveedor / Todo en Reformas M&V", 20, firmaY + 12);
+  doc.text("Tel: +34 634 11 41 49", 20, firmaY + 18);
 
   doc.save(`Cotizacion_${datos.cliente || "cliente"}.pdf`);
 }

@@ -7,6 +7,7 @@ export default function CotizacionRemodelacion() {
     direccion: "",
     fecha: new Date().toLocaleDateString(),
     observaciones: "",
+    abonos: "",
     valorCotizacion: "",
   });
 
@@ -14,6 +15,11 @@ export default function CotizacionRemodelacion() {
 
   const agregarFila = () =>
     setServicios([...servicios, { descripcion: "" }]);
+
+  const eliminarFila = (index) => {
+    const nuevos = servicios.filter((_, i) => i !== index);
+    setServicios(nuevos);
+  };
 
   const actualizarServicio = (index, campo, valor) => {
     const nuevos = [...servicios];
@@ -72,6 +78,7 @@ export default function CotizacionRemodelacion() {
             <thead>
               <tr className="bg-gray-100 border-b">
                 <th className="p-2 text-left">Servicio</th>
+                <th className="p-2 w-10"></th>
               </tr>
             </thead>
             <tbody>
@@ -88,6 +95,14 @@ export default function CotizacionRemodelacion() {
                       className="w-full border-none outline-none bg-transparent text-sm sm:text-base"
                     />
                   </td>
+                  <td className="p-2 text-center">
+                    <button
+                      onClick={() => eliminarFila(i)}
+                      className="text-red-500 hover:text-red-700 font-bold text-lg"
+                    >
+                      ×
+                    </button>
+                  </td>
                 </tr>
               ))}
             </tbody>
@@ -96,7 +111,6 @@ export default function CotizacionRemodelacion() {
 
         {/* BOTÓN + VALOR */}
         <div className="flex flex-col md:flex-row md:justify-between md:items-center mb-8 gap-4">
-          {/* Botón agregar servicio */}
           <button
             onClick={agregarFila}
             className="w-full md:w-auto px-4 py-2 bg-gray-800 text-white rounded-md hover:bg-gray-900 transition-colors text-sm sm:text-base"
@@ -104,7 +118,6 @@ export default function CotizacionRemodelacion() {
             Agregar servicio
           </button>
 
-          {/* Valor cotización */}
           <div className="w-full md:w-auto flex flex-col sm:flex-row md:flex-row items-start sm:items-center gap-2 sm:gap-3">
             <label className="text-gray-700 font-semibold text-sm sm:text-base w-full sm:w-auto">
               Valor cotización
@@ -133,6 +146,20 @@ export default function CotizacionRemodelacion() {
             onChange={(e) =>
               setDatos({ ...datos, observaciones: e.target.value })
             }
+            className="w-full border p-3 rounded-md focus:ring-2 focus:ring-blue-600 outline-none resize-none text-sm sm:text-base"
+          />
+        </div>
+
+        {/* ABONOS */}
+        <div className="mb-8">
+          <label className="block text-sm font-semibold text-gray-700 mb-2">
+            Abonos
+          </label>
+          <textarea
+            rows={3}
+            placeholder="Ej: Primer abono de 500€, segundo pendiente para el 15 de noviembre."
+            value={datos.abonos}
+            onChange={(e) => setDatos({ ...datos, abonos: e.target.value })}
             className="w-full border p-3 rounded-md focus:ring-2 focus:ring-blue-600 outline-none resize-none text-sm sm:text-base"
           />
         </div>
