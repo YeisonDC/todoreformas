@@ -96,10 +96,11 @@ export async function generarPDF(datos, servicios) {
 
   // Total
   let y = doc.lastAutoTable.finalY + 10;
-  const totalTexto = `Total de la cotización: €${total.toLocaleString("es-ES", {
+  const totalTexto = `Total de la cotización: € ${total.toLocaleString("es-ES", {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
-  })}`;
+  })}`; // 👈 se añadió un espacio después del símbolo €
+
   doc.setFont("helvetica", "bold");
   doc.setFontSize(13);
   doc.setTextColor(60, 60, 60);
