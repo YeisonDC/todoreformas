@@ -7,12 +7,10 @@ export default function CotizacionRemodelacion() {
     direccion: "",
     fecha: new Date().toLocaleDateString(),
     observaciones: "",
-    valorCotizacion: "", // 👈 nuevo campo
+    valorCotizacion: "",
   });
 
-  const [servicios, setServicios] = useState([
-    { descripcion: "" },
-  ]);
+  const [servicios, setServicios] = useState([{ descripcion: "" }]);
 
   const agregarFila = () =>
     setServicios([...servicios, { descripcion: "" }]);
@@ -28,83 +26,88 @@ export default function CotizacionRemodelacion() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 p-8 flex flex-col items-center">
-      <div className="bg-white shadow-lg rounded-lg w-full max-w-4xl p-10 border border-gray-200">
-        <header className="mb-8 border-b pb-4">
-          <h1 className="text-3xl font-bold text-gray-800">
+    <div className="min-h-screen bg-gray-100 p-4 sm:p-6 md:p-8 flex flex-col items-center">
+      <div className="bg-white shadow-lg rounded-lg w-full max-w-4xl p-6 sm:p-8 md:p-10 border border-gray-200">
+        {/* ENCABEZADO */}
+        <header className="mb-6 sm:mb-8 border-b pb-4 text-center md:text-left">
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-800">
             Todo en Reformas M&V
           </h1>
-          <p className="text-gray-600 text-sm">
+          <p className="text-gray-600 text-sm sm:text-base">
             Servicios integrales en remodelación y construcción
           </p>
         </header>
 
-        <h2 className="text-xl font-semibold text-gray-800 mb-6">
+        <h2 className="text-lg sm:text-xl font-semibold text-gray-800 mb-4 sm:mb-6 text-center md:text-left">
           Cotización de Servicios
         </h2>
 
-        {/* Datos del cliente */}
+        {/* DATOS DEL CLIENTE */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
           <input
             type="text"
             placeholder="Nombre del cliente"
             value={datos.cliente}
             onChange={(e) => setDatos({ ...datos, cliente: e.target.value })}
-            className="border p-2 rounded-md focus:ring-2 focus:ring-blue-600 outline-none"
+            className="border p-2 rounded-md focus:ring-2 focus:ring-blue-600 outline-none w-full"
           />
           <input
             type="text"
             placeholder="Dirección del proyecto"
             value={datos.direccion}
             onChange={(e) => setDatos({ ...datos, direccion: e.target.value })}
-            className="border p-2 rounded-md focus:ring-2 focus:ring-blue-600 outline-none"
+            className="border p-2 rounded-md focus:ring-2 focus:ring-blue-600 outline-none w-full"
           />
           <input
             type="text"
             readOnly
             value={datos.fecha}
-            className="border p-2 rounded-md bg-gray-50 text-gray-700"
+            className="border p-2 rounded-md bg-gray-50 text-gray-700 w-full"
           />
         </div>
 
-        {/* Lista de servicios */}
-        <table className="w-full border-collapse mb-6 text-sm">
-          <thead>
-            <tr className="bg-gray-100 border-b">
-              <th className="p-2 text-left">Servicio</th>
-            </tr>
-          </thead>
-          <tbody>
-            {servicios.map((s, i) => (
-              <tr key={i} className="border-b hover:bg-gray-50">
-                <td className="p-2">
-                  <input
-                    type="text"
-                    placeholder="Ej: Instalación de drywall"
-                    value={s.descripcion}
-                    onChange={(e) =>
-                      actualizarServicio(i, "descripcion", e.target.value)
-                    }
-                    className="w-full border-none outline-none bg-transparent"
-                  />
-                </td>
+        {/* SERVICIOS */}
+        <div className="overflow-x-auto mb-6">
+          <table className="min-w-full border-collapse text-sm sm:text-base">
+            <thead>
+              <tr className="bg-gray-100 border-b">
+                <th className="p-2 text-left">Servicio</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {servicios.map((s, i) => (
+                <tr key={i} className="border-b hover:bg-gray-50">
+                  <td className="p-2">
+                    <input
+                      type="text"
+                      placeholder="Ej: Instalación de drywall"
+                      value={s.descripcion}
+                      onChange={(e) =>
+                        actualizarServicio(i, "descripcion", e.target.value)
+                      }
+                      className="w-full border-none outline-none bg-transparent text-sm sm:text-base"
+                    />
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
 
-        <div className="flex justify-between items-center mb-8">
+        {/* BOTÓN + VALOR */}
+        <div className="flex flex-col md:flex-row md:justify-between md:items-center mb-8 gap-4">
+          {/* Botón agregar servicio */}
           <button
             onClick={agregarFila}
-            className="px-4 py-2 bg-gray-800 text-white rounded-md hover:bg-gray-900 transition-colors"
+            className="w-full md:w-auto px-4 py-2 bg-gray-800 text-white rounded-md hover:bg-gray-900 transition-colors text-sm sm:text-base"
           >
             Agregar servicio
           </button>
 
-          {/* Campo de valor manual */}
-          <div className="flex items-center gap-2">
-            <label className="text-gray-700 font-semibold">
-              Valor cotización:
+          {/* Valor cotización */}
+          <div className="w-full md:w-auto flex flex-col sm:flex-row md:flex-row items-start sm:items-center gap-2 sm:gap-3">
+            <label className="text-gray-700 font-semibold text-sm sm:text-base w-full sm:w-auto">
+              Valor cotización
             </label>
             <input
               type="number"
@@ -113,12 +116,12 @@ export default function CotizacionRemodelacion() {
               onChange={(e) =>
                 setDatos({ ...datos, valorCotizacion: e.target.value })
               }
-              className="border p-2 rounded-md w-32 text-right focus:ring-2 focus:ring-blue-600 outline-none"
+              className="border p-2 rounded-md w-full sm:w-48 md:w-32 text-right focus:ring-2 focus:ring-blue-600 outline-none"
             />
           </div>
         </div>
 
-        {/* Observaciones */}
+        {/* OBSERVACIONES */}
         <div className="mb-8">
           <label className="block text-sm font-semibold text-gray-700 mb-2">
             Observaciones o novedades
@@ -130,14 +133,15 @@ export default function CotizacionRemodelacion() {
             onChange={(e) =>
               setDatos({ ...datos, observaciones: e.target.value })
             }
-            className="w-full border p-3 rounded-md focus:ring-2 focus:ring-blue-600 outline-none resize-none"
+            className="w-full border p-3 rounded-md focus:ring-2 focus:ring-blue-600 outline-none resize-none text-sm sm:text-base"
           />
         </div>
 
-        <div className="text-right">
+        {/* BOTÓN FINAL */}
+        <div className="text-center md:text-right">
           <button
             onClick={handleGenerarPDF}
-            className="px-6 py-2 bg-blue-700 text-white rounded-md hover:bg-blue-800 transition-colors"
+            className="w-full sm:w-auto px-6 py-2 bg-blue-700 text-white rounded-md hover:bg-blue-800 transition-colors text-sm sm:text-base"
           >
             Generar PDF
           </button>
